@@ -36,5 +36,34 @@ me.save().then(() => {
   console.log('Error', error)
 });
 
+// Player constructor
+const Player = mongoose.model('Player', {
+  first_name: {
+    type: String
+  },
+  last_name: {
+    type: String
+  },
+  rating: {
+    type: Number
+  },
+  handedness: {
+    type: Boolean
+  }
+});
+
+const player = new Player({
+  first_name: 'J',
+  last_name: 'K',
+  rating: 5,
+  handedness: true
+});
+
+player.save().then(() => {
+  console.log(player);
+}).catch((error) => {
+  console.log(error);
+});
+
 
 module.exports = {};
