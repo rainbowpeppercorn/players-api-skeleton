@@ -1,3 +1,7 @@
+const mongoose = require('mongoose');
+const validator = require('validator');
+
+
 // User constructor
 const User = mongoose.model('User', {
   id: {
@@ -36,3 +40,6 @@ const User = mongoose.model('User', {
     }
   }
 });
+
+
+module.exports = User;

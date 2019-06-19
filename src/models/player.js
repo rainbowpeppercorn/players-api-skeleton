@@ -1,3 +1,6 @@
+const mongoose = require('mongoose');
+const validator = require('validator');
+
 // Player constructor
 const Player = mongoose.model('Player', {
   first_name: {
@@ -14,3 +17,5 @@ const Player = mongoose.model('Player', {
     enum: ['right', 'left']
   }
 });
+
+module.exports = Player;

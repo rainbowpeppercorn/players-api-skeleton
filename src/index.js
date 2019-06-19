@@ -1,4 +1,6 @@
 const express = require('express');
+require('./db/mongoose.js'); // Ensure mongoose.js runs and connects to DB
+const User = require('./models/user');
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -7,11 +9,15 @@ const port = process.env.PORT || 3000;
 app.use(express.json());
 
 
-
 // Create User
 app.post('/api/user', (req, res) => {
-  console.log(req.body);
-  res.send('testing')
+  const user = new User(req.body);
+
+  user.save().then(() => {
+    res.send(user);
+  }).catch((e) => {
+    res.status(500).send(e);
+  });
 });
 
 app.listen(port, () => {
