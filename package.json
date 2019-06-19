@@ -7,7 +7,9 @@
     "test": "test"
   },
   "scripts": {
-    "test": "mocha test/**/*.spec.js"
+    "test": "mocha test/**/*.spec.js",
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js"
   },
   "author": "Steven White <steven@galchemy.codes>",
   "license": "ISC",
@@ -18,10 +20,12 @@
     "eslint": "^4.0.0",
     "lodash": "^4.17.4",
     "mocha": "^3.4.2",
+    "nodemon": "^1.19.1",
     "sinon": "^2.3.4",
     "sinon-chai": "^2.11.0"
   },
   "dependencies": {
+    "express": "^4.17.1",
     "mongodb": "^3.2.7",
     "mongoose": "^5.6.0",
     "validator": "^11.0.0"

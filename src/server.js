@@ -2,11 +2,7 @@
 const mongoose = require('mongoose');
 const validator = require('validator');
 
-// Connect to database (connectionURL, options object)
-mongoose.connect('mongodb://127.0.0.1:27017/players-api', {
-  useNewUrlParser: true,
-  useCreateIndex: true
-});
+
 
 // User constructor
 const User = mongoose.model('User', {
@@ -15,18 +11,33 @@ const User = mongoose.model('User', {
   },
   first_name: {
     type: String,
-    required: true
+    required: true,
+    trim: true
   },
   last_name: {
     type: String,
-    required: true
+    required: true,
+    trim: true
   },
   email: {
     type: String,
     required: true,
+    trim: true,
+    lowercase: true,
     validate(value) {
       if (!validator.isEmail(value)) {
         throw new Error('Email is invalid');
+      }
+    }
+  },
+  password: {
+    type: String,
+    required: true,
+    minlength: 8,
+    trim: true,
+    validate(value) {
+      if (value.toLowerCase().includes('password')) {
+        throw new Error('Password cannot contain the word password');
       }
     }
   }
@@ -36,7 +47,8 @@ const me = new User({
   id: '1',
   first_name: 'Jenn',
   last_name: 'K',
-  email: 'name@email.com'
+  email: 'name@email.com',
+  password: 'asf'
 });
 
 me.save().then(() => {
@@ -57,7 +69,8 @@ const Player = mongoose.model('Player', {
     type: Number
   },
   handedness: {
-    type: Boolean
+    type: String,
+    enum: ['right', 'left']
   }
 });
 
