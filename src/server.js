@@ -1,5 +1,6 @@
 // TODO
 const mongoose = require('mongoose');
+const validator = require('validator');
 
 // Connect to database (connectionURL, options object)
 mongoose.connect('mongodb://127.0.0.1:27017/players-api', {
@@ -13,13 +14,21 @@ const User = mongoose.model('User', {
     type: String
   },
   first_name: {
-    type: String
+    type: String,
+    required: true
   },
   last_name: {
-    type: String
+    type: String,
+    required: true
   },
   email: {
-    type: String
+    type: String,
+    required: true,
+    validate(value) {
+      if (!validator.isEmail(value)) {
+        throw new Error('Email is invalid');
+      }
+    }
   }
 });
 
