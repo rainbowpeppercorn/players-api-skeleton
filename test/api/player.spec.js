@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const server = require('../../src/server');
+const server = require('../../src/');
 const { User, Player } = require('../../src/models');
 const data = require('../util/data');
 
