@@ -52,7 +52,7 @@ router.get('/api/user/:id', async (req, res) => {
 // Update User by ID
 router.patch('/api/user/:id', async (req, res) => {
   // Error handling: User an only update value if property is allowed 
-  const updates = Object.keys(req.body); // Convert req.body from an object to an array of properties
+  const updates = Object.keys(req.body); // Convert req.body from an object to an array of its properties
   const allowedUpdates = ['first_name', 'last_name', 'email', 'password',];
   const isValidOperation = updates.every((update) => { // every property must return true
     return allowedUpdates.includes(update);
@@ -64,7 +64,14 @@ router.patch('/api/user/:id', async (req, res) => {
 
   // Then do the update
   try {
-    const user = await User.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
+
+    const user = await User.findById(req.params.id); // .findByIdAndUpdate bypasses middleware
+
+    updates.forEach((update) => {
+      user[update] = req.body[update]; // use bracket notation bc the data from user is dynamic 
+    });
+
+    await user.save() // this is where middleware is executed
 
     if (!user) {
       return res.status(404).send();

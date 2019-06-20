@@ -1,9 +1,9 @@
 const mongoose = require('mongoose');
 const validator = require('validator');
 
-
-// User constructor
-const User = mongoose.model('User', {
+// create Schema w/ object that defines all properties for User
+// separate from model to take advantage of middleware functionality 
+const userSchema = new mongoose.Schema({
   id: {
     type: String
   },
@@ -40,6 +40,21 @@ const User = mongoose.model('User', {
     }
   }
 });
+
+// before saving, do some stuff (standard function bc 'this' binding is important) 
+userSchema.pre('save', async function (next) {
+  const user = this; // just for funsies
+
+  // for new and updated passwords, hash the plaintext 8 rounds
+  if (user.isModified('password')) {
+    user.password = await bcrypt.hash(user.password, 8);
+  }
+
+  next(); // call next() to finish the process
+});
+
+// User model
+const User = mongoose.model('User', userSchema);
 
 
 module.exports = User;
