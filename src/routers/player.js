@@ -21,10 +21,10 @@ router.post('/api/players', auth, async (req, res) => {
 });
 
 // Get (Read) an array of all Players
-router.get('/api/players', async (req, res) => {
+router.get('/api/players', auth, async (req, res) => {
   try {
-    const players = await Player.find({});
-    res.send(players);
+    await req.user.populate('players').execPopulate();
+    res.send(req.user.players);
   } catch (e) {
     res.status(500).send();
   }
