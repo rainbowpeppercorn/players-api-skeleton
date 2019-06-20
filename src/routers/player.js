@@ -20,7 +20,7 @@ router.post('/api/players', auth, async (req, res) => {
   }
 });
 
-// Get (Read) an array of all Players
+// Get all Players (for logged in User only)
 router.get('/api/players', auth, async (req, res) => {
   try {
     await req.user.populate('players').execPopulate();
@@ -52,7 +52,7 @@ router.get('/api/players/:id', auth, async (req, res) => {
 });
 
 // Update a Player by ID
-router.patch('/api/players/:id', async (req, res) => {
+router.patch('/api/players/:id', auth, async (req, res) => {
   const updates = Object.keys(req.body); // Convert req.body from an object to an array of properties
   const allowedUpdates = ['first_name', 'last_name', 'rating', 'handedness'];
   const isValidOperation = updates.every((update) => {
@@ -65,17 +65,17 @@ router.patch('/api/players/:id', async (req, res) => {
 
   try {
 
-    const player = await Player.findById(req.params.id);
+    const player = await Player.findOne({ _id: req.params.id, owner: req.user._id });
+  
+    if (!player) {
+      return res.status(404).send();
+    }
 
     updates.forEach((update) => {
       player[update] = req.body[update];
     });
 
     await player.save(); // this is where the middleware runs (can only update valid properties)
-  
-    if (!player) {
-      return res.status(404).send();
-    }
 
     res.send(player);
   } catch (e) {
@@ -84,9 +84,10 @@ router.patch('/api/players/:id', async (req, res) => {
 });
 
 // Delete a Player by ID
-router.delete('/api/players/:id', async (req, res) => {
+router.delete('/api/players/:id', auth, async (req, res) => {
   try {
-    const player = await Player.findByIdAndDelete(req.params.id);
+
+    const player = await Player.findOneAndDelete({ _id: req.params.id, owner: req.user._id });
 
     if (!player) {
       res.status(404).send();
