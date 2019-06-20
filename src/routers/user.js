@@ -104,16 +104,12 @@ router.patch('/api/user/:id', async (req, res) => {
 });
 
 // Delete a User by ID
-router.delete('/api/user/:id', auth, async (req, res) => {
+router.delete('/api/user/me', auth, async (req, res) => {
   try {
-    const user = await User.findByIdAndDelete(req.params.id);
-
-    if (!user) {
-      return res.status(404).send()
-    }
+    await req.user.remove();
 
     // Send the deleted User's info back if successful
-    res.send(user);
+    res.send(req.user);
   } catch (e) {
     res.status(500).send();
   }
