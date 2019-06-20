@@ -10,8 +10,9 @@ router.post('/api/user', async (req, res) => {
 
   try {
     await user.save();
+    const token = await user.generateAuthToken();
     // If all goes well...
-    res.status(201).send(user);
+    res.status(201).send({ user, token });
   } catch (e) {
     res.status(400).send(e);
   }
@@ -20,8 +21,10 @@ router.post('/api/user', async (req, res) => {
 // Login a User
 router.post('/api/login', async (req, res) => {
   try {
-    const user = await User.findByCredentials(req.body.email, req.body.password); // BYO function (in user.js models)
+    // Find user; BYO function (in user.js models)
+    const user = await User.findByCredentials(req.body.email, req.body.password);
     
+    // Generate JWT
     const token = await user.generateAuthToken();
     
     res.send({ user, token });
