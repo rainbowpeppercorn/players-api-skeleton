@@ -59,6 +59,18 @@ app.get('/api/user/:id', async (req, res) => {
 
 // Update User by ID
 app.patch('/api/user/:id', async (req, res) => {
+  // Error handling: User an only update value if property is allowed 
+  const updates = Object.keys(req.body); // Convert req.body from an object to an array of properties
+  const allowedUpdates = ['first_name', 'last_name', 'email', 'password',];
+  const isValidOperation = updates.every((update) => { // every property must return true
+    return allowedUpdates.includes(update);
+  });
+
+  if (!isValidOperation) {
+    return res.status(400).send({ error: 'User not permitted to make these updates' });
+  }
+
+  // Then do the update
   try {
     const user = await User.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
 
@@ -71,6 +83,22 @@ app.patch('/api/user/:id', async (req, res) => {
     res.status(400).send();
   }
 
+});
+
+// Delete a User by ID
+app.delete('/api/user/:id', async (req, res) => {
+  try {
+    const user = await User.findByIdAndDelete(req.params.id);
+
+    if (!user) {
+      return res.status(404).send()
+    }
+
+    // Send the deleted User's info back if successful
+    res.send(user);
+  } catch (e) {
+    res.status(500).send();
+  }
 });
 
 // Create a Player
@@ -115,6 +143,47 @@ app.get('/api/players/:id', async (req, res) => {
   }
 });
 
+// Update a Player by ID
+app.patch('/api/players/:id', async (req, res) => {
+  const updates = Object.keys(req.body); // Convert req.body from an object to an array of properties
+  const allowedUpdates = ['first_name', 'last_name', 'rating', 'handedness'];
+  const isValidOperation = updates.every((update) => {
+    return allowedUpdates.includes(update);
+  });
+
+  if (!isValidOperation) {
+    return res.status(400).send({ error: 'User not permitted to make these updates on a Player' });
+  }
+
+  try {
+    const player = await Player.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true })
+  
+    if (!player) {
+      return res.status(404).send();
+    }
+
+    res.send(player);
+  } catch (e) {
+    res.status(400).send(e);
+  }
+});
+
+// Delete a Player by ID
+app.delete('/api/players/:id', async (req, res) => {
+  try {
+    const player = await Player.findByIdAndDelete(req.params.id);
+
+    if (!player) {
+      res.status(404).send();
+    }
+
+    // If successful, send back the deleted player's info
+    res.send(player);
+
+  } catch (e) {
+    res.status(500).send();
+  }
+});
 
 app.listen(port, () => {
   console.log('Server is up on port ' + port);
