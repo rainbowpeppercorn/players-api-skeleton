@@ -57,6 +57,22 @@ app.get('/api/user/:id', async (req, res) => {
   }
 });
 
+// Update User by ID
+app.patch('/api/user/:id', async (req, res) => {
+  try {
+    const user = await User.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
+
+    if (!user) {
+      return res.status(404).send();
+    }
+
+    res.send(user);
+  } catch (e) {
+    res.status(400).send();
+  }
+
+});
+
 // Create a Player
 app.post('/api/players', async (req, res) => {
   const player = new Player(req.body)
@@ -98,6 +114,7 @@ app.get('/api/players/:id', async (req, res) => {
     res.status(500).send();
   }
 });
+
 
 app.listen(port, () => {
   console.log('Server is up on port ' + port);
