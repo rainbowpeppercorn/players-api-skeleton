@@ -34,14 +34,9 @@ router.post('/api/login', async (req, res) => {
   }
 });
 
-// Get all Users stored in DB (array)
-router.get('/api/user', auth, async (req, res) => {
-  try {
-    const users = await User.find({});
-    res.send(users);
-  } catch (e) {
-    res.status(500).send();
-  }
+// Get profile for current (logged in) User
+router.get('/api/user/me', auth, async (req, res) => {
+  res.send(req.user);
 });
 
 // Get individual User by ID
