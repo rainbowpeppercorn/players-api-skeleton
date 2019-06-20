@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const validator = require('validator');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const Player = require('./player')
 
 // create Schema w/ object that defines all properties for User
 // separate from model to take advantage of middleware functionality 
@@ -106,7 +107,7 @@ userSchema.statics.findByCredentials = async (email, password) => {
   return user;
 }
 
-// Before saving, hash the plaintext password (standard function bc 'this' binding is important) 
+// Hash the plaintext password before saving (standard function bc 'this' binding is important) 
 userSchema.pre('save', async function (next) {
   const user = this; // Just for funsies
 
@@ -116,6 +117,17 @@ userSchema.pre('save', async function (next) {
   }
 
   next(); // Call next() to finish the process
+});
+
+// Delete all Players when their User is removed
+userSchema.pre('remove', async function (next) {
+  const user = this;
+
+  await Player.deleteMany({
+    owner: user._id
+  });
+
+  next();
 });
 
 // User model
