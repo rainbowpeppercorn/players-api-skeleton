@@ -1,8 +1,9 @@
 const express = require('express');
 const User = require('../models/user');
+const auth = require('../middleware/authentication');
 const router = new express.Router();
 
-// Public routes: Create User, Login User (all others require authentication)
+// Public routes: Create User, Login User (all others require auth)
 
 // Create a User
 router.post('/api/user', async (req, res) => {
@@ -34,7 +35,7 @@ router.post('/api/login', async (req, res) => {
 });
 
 // Get all Users stored in DB (array)
-router.get('/api/user', async (req, res) => {
+router.get('/api/user', auth, async (req, res) => {
   try {
     const users = await User.find({});
     res.send(users);
