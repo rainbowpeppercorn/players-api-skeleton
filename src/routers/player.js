@@ -1,9 +1,10 @@
 const express = require('express');
 const Player = require('../models/player');
+const auth = require('../middleware/authentication');
 const router = new express.Router();
 
 // Create a Player
-router.post('/api/players', async (req, res) => {
+router.post('/api/players', auth, async (req, res) => {
   const player = new Player(req.body)
 
   try {
