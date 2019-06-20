@@ -31,11 +31,12 @@ router.get('/api/players', async (req, res) => {
 });
 
 // Get (Read) single Player by ID
-router.get('/api/players/:id', async (req, res) => {
+router.get('/api/players/:id', auth, async (req, res) => {
   const _id = req.params.id;
 
   try {
-    const player = await Player.findById(_id);
+
+    const player = await Player.findOne({ _id: _id, owner: req.user._id });
 
     // Check if such a player exists
     if (!player) {
