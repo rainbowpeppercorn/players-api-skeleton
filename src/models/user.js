@@ -51,8 +51,21 @@ const userSchema = new mongoose.Schema({
 });
 
 
+// Hide the user password and tokens in response
+userSchema.methods.toJSON = function () {
+    const user = this;
+
+    const userObject = user.toObject(); // Get raw profile data
+
+    // Delete sensitive info off of response object
+    delete userObject.password;
+    delete userObject.tokens;
+
+    return userObject;
+}
+
 // Generate JWT
-// 'Methods' --> accessible on instances; aka Instance Methods
+// 'Methods' --> accessible on instances (user); aka Instance Methods
 userSchema.methods.generateAuthToken = async function () {
   const user = this; // Just for funsies
   const token = jwt.sign({ _id: user._id.toString() }, 'secretcodesupersecret');
@@ -66,7 +79,7 @@ userSchema.methods.generateAuthToken = async function () {
 
 
 // Verify a user by their email and password
-// 'Static" methods --> accessible on models; aka Model Methods
+// 'Static" methods --> accessible on models (User); aka Model Methods
 userSchema.statics.findByCredentials = async (email, password) => {
   const user = await User.findOne({ email });
 
