@@ -2,12 +2,15 @@ const express = require('express');
 require('./db/mongoose.js'); // Ensure mongoose.js runs and connects to DB
 const User = require('./models/user');
 const Player = require('./models/player');
+const userRouter = require('./routers/user');
 
 const app = express();
 const port = process.env.PORT || 3000;
 
 // Configure express to automatically parse the incoming json to an object
 app.use(express.json());
+app.use(userRouter);
+
 
 
 // Create a User
