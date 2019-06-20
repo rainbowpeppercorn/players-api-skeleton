@@ -1,0 +1,89 @@
+const express = require('express');
+const Player = require('../models/player');
+const router = new express.Router();
+
+// Create a Player
+router.post('/api/players', async (req, res) => {
+  const player = new Player(req.body)
+
+  try {
+    await player.save();
+    res.status(201).send(player);
+  } catch (e) {
+    res.status(400).send(e);
+  }
+});
+
+// Get (Read) an array of all Players
+router.get('/api/players', async (req, res) => {
+  try {
+    const players = await Player.find({});
+    res.send(players);
+  } catch (e) {
+    res.status(500).send();
+  }
+});
+
+// Get (Read) single Player by ID
+router.get('/api/players/:id', async (req, res) => {
+  const _id = req.params.id;
+
+  try {
+    const player = await Player.findById(_id);
+
+    // Check if such a player exists
+    if (!player) {
+      return res.status(404).send();
+    }
+  
+    // If all goes well... get dat player
+    res.send(player);
+
+  }  catch (e) {
+    res.status(500).send();
+  }
+});
+
+// Update a Player by ID
+router.patch('/api/players/:id', async (req, res) => {
+  const updates = Object.keys(req.body); // Convert req.body from an object to an array of properties
+  const allowedUpdates = ['first_name', 'last_name', 'rating', 'handedness'];
+  const isValidOperation = updates.every((update) => {
+    return allowedUpdates.includes(update);
+  });
+
+  if (!isValidOperation) {
+    return res.status(400).send({ error: 'User not permitted to make these updates on a Player' });
+  }
+
+  try {
+    const player = await Player.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true })
+  
+    if (!player) {
+      return res.status(404).send();
+    }
+
+    res.send(player);
+  } catch (e) {
+    res.status(400).send(e);
+  }
+});
+
+// Delete a Player by ID
+router.delete('/api/players/:id', async (req, res) => {
+  try {
+    const player = await Player.findByIdAndDelete(req.params.id);
+
+    if (!player) {
+      res.status(404).send();
+    }
+
+    // If successful, send back the deleted player's info
+    res.send(player);
+
+  } catch (e) {
+    res.status(500).send();
+  }
+});
+
+module.exports = router;
