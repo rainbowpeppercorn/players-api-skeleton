@@ -64,7 +64,7 @@ router.patch('/api/players/:id', async (req, res) => {
       player[update] = req.body[update];
     });
 
-    await player.save(); // this is where the middleware runs
+    await player.save(); // this is where the middleware runs (can only update valid properties)
   
     if (!player) {
       return res.status(404).send();

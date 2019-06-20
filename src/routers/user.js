@@ -2,6 +2,8 @@ const express = require('express');
 const User = require('../models/user');
 const router = new express.Router();
 
+// Public routes: Create User, Login User (all others require authentication)
+
 // Create a User
 router.post('/api/user', async (req, res) => {
   const user = new User(req.body);
@@ -15,11 +17,23 @@ router.post('/api/user', async (req, res) => {
   }
 });
 
-// Get array of all Users stored in DB
+// Login a User
+router.post('/api/login', async (req, res) => {
+  try {
+    const user = await User.findByCredentials(req.body.email, req.body.password); // BYO function (in user.js models)
+    
+    const token = await user.generateAuthToken();
+    
+    res.send({ user, token });
+  }  catch (e) {
+    res.status(400).send();
+  }
+});
+
+// Get all Users stored in DB (array)
 router.get('/api/user', async (req, res) => {
   try {
     const users = await User.find({});
-    
     res.send(users);
   } catch (e) {
     res.status(500).send();
