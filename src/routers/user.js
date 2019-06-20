@@ -52,6 +52,15 @@ router.post('/api/logout', auth, async (req, res) => {
 });
 
 // Log out of all sessions
+router.post('/api/logoutAll', auth, async (req, res) => {
+  try {
+    req.user.tokens = []; // Clear out the tokens array
+    await req.user.save(); // Save the token-less User
+    res.send();
+  } catch (e) {
+    res.status(500).send();
+  }
+});
 
 // Get profile for current (logged in) User
 router.get('/api/user/me', auth, async (req, res) => {
