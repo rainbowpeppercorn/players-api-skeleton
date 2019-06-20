@@ -50,6 +50,14 @@ const userSchema = new mongoose.Schema({
   }]
 });
 
+// Create a Virtual Property - relationship between two entities (user & task)
+// Not stored in DB (just for Mongoose)
+userSchema.virtual('players', { // set up virtual attributes
+  ref: 'Player',
+  localField: '_id', // Where the local data is stored
+  foreignField: 'owner' // Name of the field on the Player that creates relationship
+});
+
 
 // Hide the user password and tokens in response
 userSchema.methods.toJSON = function () {

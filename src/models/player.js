@@ -22,7 +22,8 @@ const Player = mongoose.model('Player', {
   },
   owner: {
     type: mongoose.Schema.Types.ObjectId,
-    required: true
+    required: true,
+    ref: 'User' // create a reference to the User model (as owner)
   }
 });
 

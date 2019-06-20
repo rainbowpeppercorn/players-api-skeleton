@@ -5,7 +5,12 @@ const router = new express.Router();
 
 // Create a Player
 router.post('/api/players', auth, async (req, res) => {
-  const player = new Player(req.body)
+
+  // Add the owner ID to any new Player
+ const player = new Player({
+   ...req.body, // ES6 spread operator : copies all props from body over to new Player
+   owner: req.user._id
+ });
 
   try {
     await player.save();
