@@ -57,7 +57,14 @@ router.patch('/api/players/:id', async (req, res) => {
   }
 
   try {
-    const player = await Player.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true })
+
+    const player = await Player.findById(req.params.id);
+
+    updates.forEach((update) => {
+      player[update] = req.body[update];
+    });
+
+    await player.save(); // this is where the middleware runs
   
     if (!player) {
       return res.status(404).send();

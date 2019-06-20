@@ -71,7 +71,7 @@ router.patch('/api/user/:id', async (req, res) => {
       user[update] = req.body[update]; // use bracket notation bc the data from user is dynamic 
     });
 
-    await user.save() // this is where middleware is executed
+    await user.save() // this is where middleware runs
 
     if (!user) {
       return res.status(404).send();

@@ -10,6 +10,8 @@ const port = process.env.PORT || 3000;
 
 // Configure express to automatically parse the incoming json to an object
 app.use(express.json());
+
+// Use separate routers for each bundle of joy 
 app.use(userRouter);
 app.use(playerRouter);
 

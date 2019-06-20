@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const validator = require('validator');
+const bcrypt = require('bcryptjs');
 
 // create Schema w/ object that defines all properties for User
 // separate from model to take advantage of middleware functionality 
