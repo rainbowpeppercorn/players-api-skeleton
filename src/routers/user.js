@@ -67,28 +67,6 @@ router.get('/api/user/me', auth, async (req, res) => {
   res.send(req.user);
 });
 
-// Get individual User by ID
-router.get('/api/user/:id', async (req, res) => {
-  const _id = req.params.id;
-
-  try {
-    const user = await User.findById(_id);
-
-    // Check if such a User exists
-    if (!user) {
-      return res.status(404).send();
-    }
-
-    res.send(user);
-  } catch (e) {
-    // Was getting CastErrors when testing IDs that were not mongoose-approved
-    if (e.name === 'CastError') {
-      return res.status(404).send();
-    }
-
-    res.status(500).send();
-  }
-});
 
 // Update User by ID
 router.patch('/api/user/:id', async (req, res) => {
@@ -126,7 +104,7 @@ router.patch('/api/user/:id', async (req, res) => {
 });
 
 // Delete a User by ID
-router.delete('/api/user/:id', async (req, res) => {
+router.delete('/api/user/:id', auth, async (req, res) => {
   try {
     const user = await User.findByIdAndDelete(req.params.id);
 
