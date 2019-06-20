@@ -13,7 +13,8 @@ const auth = async (req, res, next) => {
     }
 
     // If all goes well...
-    req.user = user; // Fetch the user for the route handler 
+    req.token = token; // Add the token toooo
+    req.user = user; // Add the user on for the route handler 
     next();
 
   } catch (e) {
