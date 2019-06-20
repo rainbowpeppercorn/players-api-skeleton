@@ -19,6 +19,10 @@ const Player = mongoose.model('Player', {
   handedness: {
     type: String,
     enum: ['right', 'left']
+  },
+  owner: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true
   }
 });
 
