@@ -8,7 +8,7 @@ const auth = async (req, res, next) => {
 
     const user = await User.findOne({ _id: decoded._id, 'tokens.token': token });
 
-    if(!user) {
+    if(!user || !token) {
       throw new Error();
     }
 
@@ -18,6 +18,9 @@ const auth = async (req, res, next) => {
     next();
 
   } catch (e) {
+    if (!token) {
+      return res.status(403).send('Token not provided');
+    }
     res.status(401).send({ error: 'Please authenticate yourself.'});
   }
 };
