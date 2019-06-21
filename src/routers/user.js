@@ -21,7 +21,7 @@ router.post('/api/user', async (req, res) => {
     if (!req.body.first_name || !req.body.last_name || !req.body.email) {
       return res.status(409).send();
     }
-    res.status(401).send('Passwords do not match');
+    res.status(409).send('Passwords do not match');
   }
 });
 

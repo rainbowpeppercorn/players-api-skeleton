@@ -80,15 +80,11 @@ userSchema.methods.toJSON = function () {
 // Generate JWT
 // 'Methods' --> accessible on instances (user); aka Instance Methods
 userSchema.methods.generateAuthToken = async function () {
-  const user = this; // Just for funsies
+  const user = this; 
   const token = jwt.sign({ _id: user._id.toString() }, 'secretcodesupersecret');
 
   // Add user's token to the user object and save to DB
   user.tokens = user.tokens.concat({ token: token });
-
-  if(!token) {
-    throw new Error();
-  }
 
   await user.save();
 
@@ -101,9 +97,6 @@ userSchema.methods.generateAuthToken = async function () {
 userSchema.statics.findByCredentials = async (email, password) => {
   const user = await User.findOne({ email });
 
-  if (!user) {
-    throw new Error('Unable to login'); 
-  }
 
   // If the email matches successfully, compare the plaintext PW w/ hashed stored PW
   const isMatch = await bcrypt.compare(password, user.password); 
