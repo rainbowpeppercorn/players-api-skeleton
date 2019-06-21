@@ -43,6 +43,10 @@ const userSchema = new mongoose.Schema({
       }
     }
   },
+  confirm_password: {
+    type: String,
+    required: true,
+  },
   tokens: [{
     token: {
       type: String,
@@ -81,6 +85,11 @@ userSchema.methods.generateAuthToken = async function () {
 
   // Add user's token to the user object and save to DB
   user.tokens = user.tokens.concat({ token: token });
+
+  if(!token) {
+    throw new Error();
+  }
+
   await user.save();
 
   return token;
@@ -110,6 +119,11 @@ userSchema.statics.findByCredentials = async (email, password) => {
 // Hash the plaintext password before saving (standard function bc 'this' binding is important) 
 userSchema.pre('save', async function (next) {
   const user = this; // Just for funsies
+
+  // confirm passwords match
+  if (user.password !== user.confirm_password) {
+    throw new Error();
+  }
 
   // For new and updated passwords, hash the plaintext 8 rounds
   if (user.isModified('password')) {

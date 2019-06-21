@@ -11,11 +11,17 @@ router.post('/api/user', async (req, res) => {
 
   try {
     await user.save();
+    // Generate JWT
     const token = await user.generateAuthToken();
+
     // If all goes well...
     res.status(201).send({ user, token });
   } catch (e) {
-    res.status(409).send(e);
+
+    if (!req.body.first_name || !req.body.last_name || !req.body.email) {
+      return res.status(409).send();
+    }
+    res.status(401).send('Passwords do not match');
   }
 });
 
@@ -30,7 +36,7 @@ router.post('/api/login', async (req, res) => {
     
     res.send({ user, token });
   }  catch (e) {
-    res.status(409).send();
+    res.status(401).send();
   }
 });
 
