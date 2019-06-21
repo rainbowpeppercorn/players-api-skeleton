@@ -9,17 +9,24 @@ router.post('/api/players', auth, async (req, res) => {
   // Add the owner ID to any new Player
  const player = new Player({
    ...req.body, // ES6 spread operator : copies all props from body over to new Player
+   full_name: req.body.first_name + ' ' + req.body.last_name,
    owner: req.user._id
  });
 
   try {
     await player.save();
+
+    // const isUnique = await player.verifyUniquePlayer();
+
     res.status(201).send(player);
   } catch (e) {
-    if (!req.body.first_name || !req.body.last_name) {
-      return res.status(409).send('Please provide both a first and last name.');
+    if (!req.body.first_name || !req.body.last_name || !req.body.rating || !req.body.handedness) {
+      return res.status(409).send('Please provide all Player info.');
     }
-    res.status(400).send(e);
+    if (!token) {
+      return res.status(401).send('Token not provided');
+    }
+    res.status(409).send(e);
   }
 });
 
@@ -100,6 +107,9 @@ router.delete('/api/players/:id', auth, async (req, res) => {
     res.send(player);
 
   } catch (e) {
+    if (!player) {
+      return res.status(404).send();
+    }
     res.status(500).send();
   }
 });
