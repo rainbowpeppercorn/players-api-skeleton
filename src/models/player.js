@@ -16,10 +16,12 @@ const playerSchema = new mongoose.Schema({
   },
   rating: {
     type: Number,
+    required: true
   },
   handedness: {
     type: String,
-    enum: ['right', 'left']
+    enum: ['right', 'left'],
+    required: true
   },
   owner: {
     type: mongoose.Schema.Types.ObjectId,

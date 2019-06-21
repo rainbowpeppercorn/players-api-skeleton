@@ -15,7 +15,7 @@ router.post('/api/user', async (req, res) => {
     // If all goes well...
     res.status(201).send({ user, token });
   } catch (e) {
-    res.status(400).send(e);
+    res.status(409).send(e);
   }
 });
 
@@ -30,7 +30,7 @@ router.post('/api/login', async (req, res) => {
     
     res.send({ user, token });
   }  catch (e) {
-    res.status(400).send();
+    res.status(409).send();
   }
 });
 

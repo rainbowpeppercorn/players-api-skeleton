@@ -16,6 +16,9 @@ router.post('/api/players', auth, async (req, res) => {
     await player.save();
     res.status(201).send(player);
   } catch (e) {
+    if (!req.body.first_name || !req.body.last_name) {
+      return res.status(409).send('Please provide both a first and last name.');
+    }
     res.status(400).send(e);
   }
 });
