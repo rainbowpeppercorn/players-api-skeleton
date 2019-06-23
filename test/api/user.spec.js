@@ -128,7 +128,7 @@ describe('User API', () => {
     it.only('should update the user data', (done) => {
       const updatedUser = Object.assign({}, data.user, { first_name: 'Elon', last_name: 'Musk' });
       chai.request(server)
-        .put(`/api/user/${loggedInUser._id}`) // changed id to _id bc Mongo
+        .put(`/api/user/${loggedInUser.id}`) // changed id to _id bc Mongo
         .send(updatedUser)
         .end((err, res) => {
           expect(err).not.to.exist;
