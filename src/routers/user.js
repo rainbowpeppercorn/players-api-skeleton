@@ -93,48 +93,34 @@ router.get('/api/user/me', auth, async (req, res) => {
 });
 
 
-// Update User with Put NEEDS WORK
+// Update User 
 router.put('/api/user/:id', auth, async (req, res) => {
-  // Error handling: User an only update value if property is allowed 
-  // const updates = Object.keys(req.body); // Convert req.body from an object to an array of its properties
-  // const allowedUpdates = ['first_name', 'last_name', 'email', 'password',];
-  // const isValidOperation = updates.every((update) => { // every property must return true
-  //   return allowedUpdates.includes(update);
-  // });
-
-  // if (!isValidOperation) {
-  //   return res.status(400).send({ error: 'User not permitted to make these updates' });
-  // }
-
-  // Then do the update
-
-  console.log('!');
 
   try {
-
+    console.log('1')
     const user = await User.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
-    console.log('2');
-
+    console.log('2')
+    console.log(user)
 
     if (!user) {
-    console.log('3');
-
+      console.log('3')
       return res.status(404).send();
     }
 
-    updates.forEach((update) => {
-      req.user[update] = req.body[update]; // use bracket notation bc the data from user is dynamic 
-    });
-    console.log('4');
+    await req.user.save()
 
+    console.log('4')
 
-    await req.user.save() // this is where middleware runs
-
-    res.send(req.user);
+    const response = {
+      user,
+      success: true
+    }
+    console.log(response)
+    res.send(response);
   } catch (e) {
     console.log('5');
 
-    res.status(400).send();
+    res.status(400).send(e);
   }
 
 });

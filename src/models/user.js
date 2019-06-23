@@ -123,10 +123,13 @@ userSchema.statics.findByCredentials = async (email, password) => {
 userSchema.pre('save', async function (next) {
   const user = this; 
 
+  console.log('pre save')
+
   // For new and updated passwords, hash the plaintext 8 rounds
   if (user.isModified('password')) {
     user.password = await bcrypt.hash(user.password, 8);
   }
+  console.log('pre save post hash')
 
   next(); 
 });
