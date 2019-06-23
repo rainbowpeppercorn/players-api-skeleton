@@ -125,7 +125,7 @@ describe('User API', () => {
         .then(res => res.body.user);
     });
 
-    it('should update the user data', (done) => {
+    it.only('should update the user data', (done) => {
       const updatedUser = Object.assign({}, data.user, { first_name: 'Elon', last_name: 'Musk' });
       chai.request(server)
         .put(`/api/user/${loggedInUser._id}`) // changed id to _id bc Mongo
