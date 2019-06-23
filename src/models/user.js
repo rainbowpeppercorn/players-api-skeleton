@@ -88,16 +88,6 @@ userSchema.methods.generateAuthToken = async function () {
   return token;
 };
 
-userSchema.methods.comparePasswords = async function () {
-  const user = this;
-  const isMatch = true;
-
-  if (user.password !== user.confirm_password) {
-    isMatch = false;
-  }
-  return isMatch;
-};
-
 
 // Verify a user by their email and password
 // 'Static" methods --> accessible on models (User); aka Model Methods
@@ -115,7 +105,7 @@ userSchema.statics.findByCredentials = async (email, password) => {
     throw new Error('Unable to login');
   }
 
-  // If both email and password match up, return the User
+  // If both email and password match up
   return user;
 };
 
@@ -123,13 +113,10 @@ userSchema.statics.findByCredentials = async (email, password) => {
 userSchema.pre('save', async function (next) {
   const user = this; 
 
-  console.log('pre save')
-
   // For new and updated passwords, hash the plaintext 8 rounds
   if (user.isModified('password')) {
     user.password = await bcrypt.hash(user.password, 8);
   }
-  console.log('pre save post hash')
 
   next(); 
 });
