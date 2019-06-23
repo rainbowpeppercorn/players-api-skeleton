@@ -14,7 +14,7 @@ const auth = async (req, res, next) => {
 
     const user = await User.findOne({ _id: decoded._id, 'tokens.token': token });
 
-    console.log('after user found middleware');
+    console.log('after user middleware');
 
     if(!user || !token) {
       throw new Error();
