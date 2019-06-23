@@ -80,10 +80,17 @@ userSchema.methods.generateAuthToken = async function () {
   const user = this; 
   const token = jwt.sign({ _id: user._id.toString() }, 'secretcodesupersecret');
 
+  console.log('generate auth token')
+
   // Add user's token to the user object and save to DB
   user.tokens = user.tokens.concat({ token: token });
 
+  console.log('after generate auth token')
+
   await user.save();
+
+  console.log('user saved in schema methods')
+  console.log(token)
 
   return token;
 };
