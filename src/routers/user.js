@@ -11,25 +11,37 @@ router.post('/api/user', async (req, res) => {
 
   try {
 
+    console.log('post 1')
+
     if (req.body.confirm_password !== req.body.password) {
       return res.status(409).send();
     }
 
+    console.log('post 2')
+
     await user.save();
+
+    console.log('post 3')
   
     // Generate JWT
     const token = await user.generateAuthToken();
+
+    console.log('post 4')
 
     const response = {
       user,
       token,
       success: true
     }
+    
+    console.log('post 5')
+    console.log(response)
 
     // If all goes well...
     res.status(201).send(response);
 
   } catch (e) {
+    console.log('post 6')
 
     if (!req.body.first_name || !req.body.last_name || !req.body.email) {
       return res.status(409).send('Must have full name and email');
