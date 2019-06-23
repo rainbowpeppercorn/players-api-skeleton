@@ -14,9 +14,6 @@ const playerSchema = new mongoose.Schema({
     required: true,
     trim: true
   },
-  full_name: {
-    type: String
-  },
   rating: {
     type: Number,
     required: true
@@ -26,28 +23,14 @@ const playerSchema = new mongoose.Schema({
     required: true,
     enum: ['right', 'left']
   },
-  owner: {
+  created_by: {
     type: mongoose.Schema.Types.ObjectId,
-    required: true,
     ref: 'User' // create a reference to the User model (as owner)
   }
 });
 
-// // Check for duplicate players 
-// playerSchema.methods.verifyUniquePlayer = async function () {
-//   const player = this;
+playerSchema.index({first_name: 1, last_name: 1}, {unique: true});
 
-// }
-
-
-// Ensure Player name is unique (first/last combo)
-// playerSchema.pre('save', async function (next) {
-//   const player = this;
-
-
-
-//   next();
-// });
 
 
 // Player Model

@@ -5,37 +5,52 @@ const router = new express.Router();
 
 // Create a Player
 router.post('/api/players', auth, async (req, res) => {
-
+  console.log('1');
   // Add the owner ID to any new Player
  const player = new Player({
    ...req.body, // ES6 spread operator : copies all props from body over to new Player
-   full_name: req.body.first_name + ' ' + req.body.last_name,
-   owner: req.user._id
+   created_by: req.user._id
  });
 
+ console.log('2');
+
   try {
+    console.log('3');
     await player.save();
+    console.log(player);
 
-    // const isUnique = await player.verifyUniquePlayer();
+    const response = {
+      player,
+      success: true
+    }
 
-    res.status(201).send(player);
+    res.status(201).send(response);
   } catch (e) {
+    console.log('5');
     if (!req.body.first_name || !req.body.last_name || !req.body.rating || !req.body.handedness) {
       return res.status(409).send('Please provide all Player info.');
     }
-    if (!token) {
-      return res.status(401).send('Token not provided');
-    }
+    console.log('6');
+
     res.status(409).send(e);
   }
 });
 
 // Get all Players (for logged in User only)
 router.get('/api/players', auth, async (req, res) => {
+  console.log('1');
   try {
     await req.user.populate('players').execPopulate();
-    res.send(req.user.players);
+
+    const response = {
+      success: true,
+      players: req.user.players,
+    }
+
+
+    res.send(response);
   } catch (e) {
+    console.log('3');
     res.status(500).send();
   }
 });
@@ -46,7 +61,7 @@ router.get('/api/players/:id', auth, async (req, res) => {
 
   try {
 
-    const player = await Player.findOne({ _id: _id, owner: req.user._id });
+    const player = await Player.findOne({ _id: _id, created_by: req.user._id });
 
     // Check if such a player exists
     if (!player) {
@@ -75,7 +90,7 @@ router.patch('/api/players/:id', auth, async (req, res) => {
 
   try {
 
-    const player = await Player.findOne({ _id: req.params.id, owner: req.user._id });
+    const player = await Player.findOne({ _id: req.params.id, created_by: req.user._id });
   
     if (!player) {
       return res.status(404).send();
@@ -96,21 +111,21 @@ router.patch('/api/players/:id', auth, async (req, res) => {
 // Delete a Player by ID
 router.delete('/api/players/:id', auth, async (req, res) => {
   try {
+    console.log('1');
 
-    const player = await Player.findOneAndDelete({ _id: req.params.id, owner: req.user._id });
+    const player = await Player.findOneAndDelete({ _id: req.params.id, created_by: req.user._id });
+    console.log(player);
 
     if (!player) {
-      res.status(404).send();
+      return res.status(404).send();
     }
+
 
     // If successful, send back the deleted player's info
     res.send(player);
 
   } catch (e) {
-    if (!player) {
-      return res.status(404).send();
-    }
-    res.status(500).send();
+    res.status(404).send('player does not exist');
   }
 });
 
