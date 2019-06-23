@@ -43,10 +43,6 @@ const userSchema = new mongoose.Schema({
       }
     }
   },
-  confirm_password: {
-    type: String,
-    required: true,
-  },
   tokens: [{
     token: {
       type: String,
@@ -60,7 +56,7 @@ const userSchema = new mongoose.Schema({
 userSchema.virtual('players', { // set up virtual attributes
   ref: 'Player',
   localField: '_id', // Where the local data is stored
-  foreignField: 'owner' // Name of the field on the Player that creates relationship
+  foreignField: 'created_by' // Name of the field on the Player that creates relationship
 });
 
 
@@ -75,11 +71,12 @@ userSchema.methods.toJSON = function () {
     delete userObject.tokens;
 
     return userObject;
-}
+};
 
 // Generate JWT
 // 'Methods' --> accessible on instances (user); aka Instance Methods
 userSchema.methods.generateAuthToken = async function () {
+
   const user = this; 
   const token = jwt.sign({ _id: user._id.toString() }, 'secretcodesupersecret');
 
@@ -89,7 +86,17 @@ userSchema.methods.generateAuthToken = async function () {
   await user.save();
 
   return token;
-}
+};
+
+userSchema.methods.comparePasswords = async function () {
+  const user = this;
+  const isMatch = true;
+
+  if (user.password !== user.confirm_password) {
+    isMatch = false;
+  }
+  return isMatch;
+};
 
 
 // Verify a user by their email and password
@@ -97,6 +104,9 @@ userSchema.methods.generateAuthToken = async function () {
 userSchema.statics.findByCredentials = async (email, password) => {
   const user = await User.findOne({ email });
 
+  if (!email) {
+    throw new Error();
+  }
 
   // If the email matches successfully, compare the plaintext PW w/ hashed stored PW
   const isMatch = await bcrypt.compare(password, user.password); 
@@ -107,23 +117,18 @@ userSchema.statics.findByCredentials = async (email, password) => {
 
   // If both email and password match up, return the User
   return user;
-}
+};
 
 // Hash the plaintext password before saving (standard function bc 'this' binding is important) 
 userSchema.pre('save', async function (next) {
-  const user = this; // Just for funsies
-
-  // confirm passwords match
-  if (user.password !== user.confirm_password) {
-    throw new Error();
-  }
+  const user = this; 
 
   // For new and updated passwords, hash the plaintext 8 rounds
   if (user.isModified('password')) {
     user.password = await bcrypt.hash(user.password, 8);
   }
 
-  next(); // Call next() to finish the process
+  next(); 
 });
 
 // Delete all Players when their User is removed
@@ -131,7 +136,7 @@ userSchema.pre('remove', async function (next) {
   const user = this;
 
   await Player.deleteMany({
-    owner: user._id
+    created_by: user._id
   });
 
   next();
