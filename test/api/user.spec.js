@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const server = require('../../src/index.js');
+const server = require('../../src');
 const User = require('../../src/models/user.js');
 const data = require('../util/data');
 
@@ -61,7 +61,7 @@ describe('User API', () => {
           expect(res.status).to.equal(201);
           expect(res.body.success).to.be.true;
           expect(res.body.user).to.be.a('object');
-          expect(res.body.user.id).to.be.a('string');
+          expect(res.body.user._id).to.be.a('string'); // changed _id to id bc Mongo
           expect(res.body.token).to.be.a('string');
           done();
         });
@@ -107,7 +107,7 @@ describe('User API', () => {
           expect(res.status).to.equal(200);
           expect(res.body.success).to.be.true;
           expect(res.body.user).to.be.a('object');
-          expect(res.body.user.id).to.be.a('string');
+          expect(res.body.user._id).to.be.a('string'); // changed id to _id bc Mongo
           expect(res.body.token).to.be.a('string');
           done();
         });
@@ -128,14 +128,14 @@ describe('User API', () => {
     it('should update the user data', (done) => {
       const updatedUser = Object.assign({}, data.user, { first_name: 'Elon', last_name: 'Musk' });
       chai.request(server)
-        .put(`/api/user/${loggedInUser.id}`)
+        .put(`/api/user/${loggedInUser._id}`) // changed id to _id bc Mongo
         .send(updatedUser)
         .end((err, res) => {
           expect(err).not.to.exist;
           expect(res.status).to.equal(200);
           expect(res.body.success).to.be.true;
           expect(res.body.user).to.be.a('object');
-          expect(res.body.user.id).to.be.a('string');
+          expect(res.body.user._id).to.be.a('string'); // changed id to _id bc Mongo
           expect(res.body.user.first_name).to.equal('Elon');
           expect(res.body.user.last_name).to.equal('Musk');
           done();

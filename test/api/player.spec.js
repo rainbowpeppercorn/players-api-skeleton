@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const server = require('../../src/index.js');
+const server = require('../../src');
 const User = require('../../src/models/user.js');
 const Player = require('../../src/models/player.js');
 const data = require('../util/data');
@@ -15,8 +15,8 @@ describe('Player API', () => {
       .send(data.user);
     token = res.body.token;
     user = res.body.user;
-    data.player.created_by = user.id;
-    data.player2.created_by = user.id;
+    data.player.created_by = user._id;  // i used Mongo, and needed _id instead of id
+    data.player2.created_by = user._id; // " "
   });
 
   describe('POST /api/players', () => {
@@ -117,6 +117,9 @@ describe('Player API', () => {
     });
 
     it('should deliver all players', async () => {
+
+      console.log(data.player)
+
       await Player.create(data.player);
       await Player.create(data.player2);
 
@@ -136,7 +139,7 @@ describe('Player API', () => {
       expect(res.body.players).to.be.a('array');
       expect(res.body.players.length).to.equal(2);
 
-      res.body.players.forEach(player => expect(player.id).to.be.a('string'));
+      res.body.players.forEach(player => expect(player._id).to.be.a('string')); // I used Mongo and needed _id instead of id
     });
 
     it('should not deliver players created by other users', async () => {
@@ -145,7 +148,7 @@ describe('Player API', () => {
         .send(Object.assign({}, data.user, { email: 'seconduser@foo.com' }));
 
       await Player.create(data.player);
-      await Player.create(Object.assign({}, data.player2, { created_by: userRes.body.user.id }));
+      await Player.create(Object.assign({}, data.player2, { created_by: userRes.body.user._id })); // changed id to _id for Mongo
 
       let res, error;
       try {
@@ -163,7 +166,7 @@ describe('Player API', () => {
       expect(res.body.players).to.be.a('array');
       expect(res.body.players.length).to.equal(1);
 
-      res.body.players.forEach(player => expect(player.id).to.be.a('string'));
+      res.body.players.forEach(player => expect(player._id).to.be.a('string')); // changed id to _id for Mongo
     });
   });
 
@@ -202,12 +205,14 @@ describe('Player API', () => {
         .post('/api/user')
         .send(Object.assign({}, data.user, { email: '__deletetest__@foo.com' }));
 
-      let player = await Player.create(Object.assign({}, data.player, { created_by: userRes.body.user.id }));
+      let player = await Player.create(Object.assign({}, data.player, { created_by: userRes.body.user._id })); // changed to _id from id
+
+    console.log(player);
 
       let res, error;
       try {
         res = await chai.request(server)
-          .delete(`/api/players/${ player.id }`)
+          .delete(`/api/players/${ player._id }`) // changed id to _id
           .set('Authorization', `Bearer ${ token }`);
       } catch (err) {
         error = err;
