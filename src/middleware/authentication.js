@@ -5,6 +5,7 @@ const auth = async (req, res, next) => {
   console.log('top of the mw');
   try {
     if (!req.header('Authorization')) {
+      console.log('inside if statement mw');
       return res.status(403).send('Auth token not found');
     }
     console.log('inside middleware');
