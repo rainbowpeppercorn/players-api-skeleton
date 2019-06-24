@@ -5,7 +5,6 @@ const playerRouter = require('./routers/player');
 
 
 // Create the express app and get it up and running
-// (The two router files determine what the app does)
 const app = express();
 const port = process.env.PORT || 3000;
 
