@@ -117,9 +117,6 @@ describe('Player API', () => {
     });
 
     it('should deliver all players', async () => {
-
-      console.log(data.player)
-
       await Player.create(data.player);
       await Player.create(data.player2);
 
@@ -206,9 +203,6 @@ describe('Player API', () => {
         .send(Object.assign({}, data.user, { email: '__deletetest__@foo.com' }));
 
       let player = await Player.create(Object.assign({}, data.player, { created_by: userRes.body.user._id })); // changed to _id from id
-
-    console.log(player);
-
       let res, error;
       try {
         res = await chai.request(server)
