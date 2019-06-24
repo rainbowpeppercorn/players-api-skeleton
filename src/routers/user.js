@@ -10,41 +10,25 @@ router.post('/api/user', async (req, res) => {
   const user = new User(req.body);
 
   try {
-
-    console.log('post 1')
-
     if (req.body.confirm_password !== req.body.password) {
-      return res.status(409).send();
+      return res.status(409).send('Passwords must match');
     }
 
-    console.log('post 2')
-
     await user.save();
-
-    console.log('post 3')
   
     // Generate JWT
     const token = await user.generateAuthToken();
-
-    console.log('post 4')
-
-
 
     const response = {
       user,
       token,
       success: true
-    }
-    
-    console.log('post 5')
-    console.log(response)
+    };
 
     // If all goes well...
     res.status(201).send(response);
 
   } catch (e) {
-    console.log('post 6')
-
     if (!req.body.first_name || !req.body.last_name || !req.body.email) {
       return res.status(409).send('Must have full name and email');
     }
@@ -65,7 +49,7 @@ router.post('/api/login', async (req, res) => {
       user,
       token,
       success: true
-    }
+    };
     
     res.send(response);
   }  catch (e) {
@@ -111,31 +95,21 @@ router.get('/api/user/me', auth, async (req, res) => {
 router.put('/api/user/:id', auth, async (req, res) => {
 
   try {
-    console.log('1')
     const user = await User.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
 
-    console.log('2')
-    console.log(req.body)
-    console.log(user)
-
     if (!user) {
-      console.log('3')
       return res.status(404).send();
     }
 
     await user.save()
 
-    console.log('4')
-
     const response = {
       user,
       success: true
     }
-    console.log(response)
+
     res.send(response);
   } catch (e) {
-    console.log('5');
-
     res.status(400).send(e);
   }
 
