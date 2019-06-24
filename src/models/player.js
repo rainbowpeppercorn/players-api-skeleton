@@ -1,6 +1,4 @@
 const mongoose = require('mongoose');
-const validator = require('validator');
-const user = require('./user');
 
 // Create Player Schema
 const playerSchema = new mongoose.Schema({
@@ -29,9 +27,8 @@ const playerSchema = new mongoose.Schema({
   }
 });
 
+// Index players by first/last name, and prohibit duplicates
 playerSchema.index({first_name: 1, last_name: 1}, {unique: true});
-
-
 
 // Player Model
 const Player = mongoose.model('Player', playerSchema);
