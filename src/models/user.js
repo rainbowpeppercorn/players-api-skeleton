@@ -45,38 +45,31 @@ const userSchema = new mongoose.Schema({
   tokens: [{
     token: {
       type: String,
-      //required: true
+      required: true
     }
   }]
 });
 
-// Create a Virtual Property - relationship between two entities (user & player)
-// Not stored in DB (just for Mongoose)
-userSchema.virtual('players', { // set up virtual attributes
+// Create a Virtual Property - relationship between User and Player (not stored in DB, just for Mongoose)
+userSchema.virtual('players', { 
+  // set up virtual attributes
   ref: 'Player',
-  localField: '_id', // Where the local data is stored
+  localField: '_id', 
   foreignField: 'created_by' // Name of the field on the Player that creates relationship
 });
 
-// Generate JWT
-// 'Methods' --> accessible on instances (user); aka Instance Methods
-userSchema.methods.generateAuthToken = async function () {
 
+// 'Methods' --> accessible on instances (user); aka Instance Methods
+
+// Generate JWT
+userSchema.methods.generateAuthToken = async function () {
   const user = this; 
   const token = jwt.sign({ _id: user._id.toString() }, 'secretcodesupersecret');
-
-  console.log('generate auth token')
 
   // Add user's token to the user object and save to DB
   user.tokens = user.tokens.concat({ token: token });
 
-  console.log('after generate auth token')
-
   await user.save();
-
-  console.log('user saved in schema methods')
-  console.log(token)
-
   return token;
 };
 
@@ -87,17 +80,17 @@ userSchema.statics.findByCredentials = async (email, password) => {
   const user = await User.findOne({ email });
 
   if (!email) {
-    throw new Error();
+    throw new Error('Credentials not found - unable to log in');
   }
 
-  // If the email matches successfully, compare the plaintext PW w/ hashed stored PW
+  // If the email matches, compare the plaintext PW w/ hashed stored PW
   const isMatch = await bcrypt.compare(password, user.password); 
 
   if (!isMatch) {
     throw new Error('Unable to login');
   }
 
-  // If both email and password match up
+  // If email and password match
   return user;
 };
 
