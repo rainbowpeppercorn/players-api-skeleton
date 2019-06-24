@@ -10,12 +10,12 @@ const auth = async (req, res, next) => {
     }
 
     const token = req.header('Authorization').replace('Bearer ', ''); // Remove Bearer from the front of the jwt string
-    const decoded = jwt.verify(token, 'secretcodesupersecret'); // decoded will have the _id property
+    const decoded = jwt.verify(token, 'secretcodesupersecret'); // Decoded will have the _id property ()
     const user = await User.findOne({ _id: decoded._id, 'tokens.token': token });
 
     // Check both user and token exist
     if(!user || !token) {
-      throw new Error();
+      throw new Error('Either user or token not found');
     }
 
     // If all goes well...
