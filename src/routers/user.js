@@ -19,6 +19,8 @@ router.post('/api/user', async (req, res) => {
     // Generate JWT
     const token = await user.generateAuthToken();
 
+    user.password = 'Hidden'; // Even tho it's already hashed
+
     const response = {
       user,
       token,
@@ -39,11 +41,13 @@ router.post('/api/user', async (req, res) => {
 // Login a User
 router.post('/api/login', async (req, res) => {
   try {
-    // Find user; BYO function (in user.js models)
+    // Verify user exists (BYO Method)
     const user = await User.findByCredentials(req.body.email, req.body.password);
     
     // Generate JWT
     const token = await user.generateAuthToken();
+
+    user.password = 'Hidden'; // Even tho it's already hashed
 
     const response = {
       user,
@@ -53,7 +57,7 @@ router.post('/api/login', async (req, res) => {
     
     res.send(response);
   }  catch (e) {
-    res.status(401).send();
+    res.status(401).send(e.message);
   }
 });
 
