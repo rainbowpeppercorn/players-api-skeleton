@@ -3,6 +3,7 @@ const validator = require('validator');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const Player = require('./player')
+const customValidation = require ('../custom-validation/custom-validation');
 
 // create Schema w/ object that defines all properties for User
 // separate from model to take advantage of middleware functionality 
@@ -38,40 +39,24 @@ const userSchema = new mongoose.Schema({
     minlength: 8,
     trim: true,
     validate(value) {
-      if (value.toLowerCase().includes('password')) {
-        throw new Error('Password cannot contain the word password');
-      }
+      customValidation.validatePassword(value);
     }
   },
   tokens: [{
     token: {
       type: String,
-      required: true
+      //required: true
     }
   }]
 });
 
-// Create a Virtual Property - relationship between two entities (user & task)
+// Create a Virtual Property - relationship between two entities (user & player)
 // Not stored in DB (just for Mongoose)
 userSchema.virtual('players', { // set up virtual attributes
   ref: 'Player',
   localField: '_id', // Where the local data is stored
   foreignField: 'created_by' // Name of the field on the Player that creates relationship
 });
-
-
-// Hide the user password and tokens in response
-userSchema.methods.toJSON = function () {
-    const user = this;
-
-    const userObject = user.toObject(); // Get raw profile data
-
-    // Delete sensitive info off of response object
-    delete userObject.password;
-    delete userObject.tokens;
-
-    return userObject;
-};
 
 // Generate JWT
 // 'Methods' --> accessible on instances (user); aka Instance Methods
@@ -131,7 +116,6 @@ userSchema.pre('save', async function (next) {
 // Delete all Players when their User is removed
 userSchema.pre('remove', async function (next) {
   const user = this;
-
   await Player.deleteMany({
     created_by: user._id
   });
@@ -141,6 +125,5 @@ userSchema.pre('remove', async function (next) {
 
 // User model
 const User = mongoose.model('User', userSchema);
-
 
 module.exports = User;
