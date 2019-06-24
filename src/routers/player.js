@@ -5,19 +5,14 @@ const router = new express.Router();
 
 // Create a Player
 router.post('/api/players', auth, async (req, res) => {
-  console.log('1');
   // Add the owner ID to any new Player
  const player = new Player({
    ...req.body, // ES6 spread operator : copies all props from body over to new Player
    created_by: req.user._id
  });
 
- console.log('2');
-
   try {
-    console.log('3');
     await player.save();
-    console.log(player);
 
     const response = {
       player,
@@ -26,11 +21,9 @@ router.post('/api/players', auth, async (req, res) => {
 
     res.status(201).send(response);
   } catch (e) {
-    console.log('5');
     if (!req.body.first_name || !req.body.last_name || !req.body.rating || !req.body.handedness) {
       return res.status(409).send('Please provide all Player info.');
     }
-    console.log('6');
 
     res.status(409).send(e);
   }
@@ -38,7 +31,6 @@ router.post('/api/players', auth, async (req, res) => {
 
 // Get all Players (for logged in User only)
 router.get('/api/players', auth, async (req, res) => {
-  console.log('1');
   try {
     await req.user.populate('players').execPopulate();
 
@@ -47,10 +39,8 @@ router.get('/api/players', auth, async (req, res) => {
       players: req.user.players,
     }
 
-
     res.send(response);
   } catch (e) {
-    console.log('3');
     res.status(500).send();
   }
 });
@@ -111,15 +101,11 @@ router.patch('/api/players/:id', auth, async (req, res) => {
 // Delete a Player by ID
 router.delete('/api/players/:id', auth, async (req, res) => {
   try {
-    console.log('1');
-
     const player = await Player.findOneAndDelete({ _id: req.params.id, created_by: req.user._id });
-    console.log(player);
 
     if (!player) {
       return res.status(404).send();
     }
-
 
     // If successful, send back the deleted player's info
     res.send(player);
