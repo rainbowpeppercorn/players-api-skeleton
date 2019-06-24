@@ -114,22 +114,28 @@ describe('User API', () => {
     });
   });
 
+
+  // NOTE: I updated this test to include the User's authentication token (mirroring the Player.spec tests)
+
   describe('PUT /api/user/:userId', () => {
-    let loggedInUser;
+    let loggedInUser, token; // added a token variable
 
     beforeEach(async () => {
       await User.remove({});
-      loggedInUser = await chai.request(server)
+      const res = await chai.request(server) // Formerly loggedInUser; I wanted to access the entire response bc I added a token
         .post('/api/user')
-        .send(data.user)
-        .then(res => res.body.user);
+        .send(data.user);
+      loggedInUser = res.body.user; // Pull out the User object
+      token = res.body.token; // Pull out token (which I attach below)
     });
 
-    it.only('should update the user data', (done) => {
+    it('should update the user data', (done) => {
       const updatedUser = Object.assign({}, data.user, { first_name: 'Elon', last_name: 'Musk' });
+      console.log(updatedUser)
       chai.request(server)
-        .put(`/api/user/${loggedInUser.id}`) // changed id to _id bc Mongo
+        .put(`/api/user/${loggedInUser._id}`) // changed id to _id bc Mongo
         .send(updatedUser)
+        .set('Authorization', `Bearer ${ token }`) // Added this line
         .end((err, res) => {
           expect(err).not.to.exist;
           expect(res.status).to.equal(200);
