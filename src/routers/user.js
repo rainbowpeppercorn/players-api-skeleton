@@ -28,6 +28,8 @@ router.post('/api/user', async (req, res) => {
 
     console.log('post 4')
 
+
+
     const response = {
       user,
       token,
@@ -46,7 +48,7 @@ router.post('/api/user', async (req, res) => {
     if (!req.body.first_name || !req.body.last_name || !req.body.email) {
       return res.status(409).send('Must have full name and email');
     }
-    res.status(409).send('Something happened in catch block');
+    res.status(409).send(e.message);
   }
 });
 
@@ -111,7 +113,9 @@ router.put('/api/user/:id', auth, async (req, res) => {
   try {
     console.log('1')
     const user = await User.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
+
     console.log('2')
+    console.log(req.body)
     console.log(user)
 
     if (!user) {
@@ -119,7 +123,7 @@ router.put('/api/user/:id', auth, async (req, res) => {
       return res.status(404).send();
     }
 
-    await req.user.save()
+    await user.save()
 
     console.log('4')
 
