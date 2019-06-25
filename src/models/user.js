@@ -58,7 +58,6 @@ userSchema.virtual('players', {
   foreignField: 'created_by' // Name of the field on the Player that creates relationship
 });
 
-
 // 'Methods' --> accessible on instances (user); aka Instance Methods
 
 // Generate JWT
