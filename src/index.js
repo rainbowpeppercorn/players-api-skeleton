@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 const express = require('express');
 require('./db/mongoose.js'); // Ensure mongoose.js runs and connects to DB
 const userRouter = require('./routers/user');
