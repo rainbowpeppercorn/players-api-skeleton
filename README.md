@@ -1,8 +1,8 @@
 # players-api-skeleton
 
-## Notes from rainbowpeppercorn
+## Notes from rainbowpeppercorn...
 
-I used NodeJs and MongoDB to complete this assessment. I also stored my JWT secret in a .env file, which I have included in this project for the sake of running the included tests. In a true production environment however, I would add the .env file to .gitignore to avoid publicly exposing sensitive information.  
+Hai Alchemy team! I used NodeJs and MongoDB to complete this assessment. I also stored my JWT secret in a .env file, which I have included in this project for the sake of running the included tests. In a true production environment however, I would add the .env file to .gitignore to avoid publicly exposing sensitive information.  
 
 
 ## Instructions
