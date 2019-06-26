@@ -139,9 +139,14 @@ router.patch('/api/user/me', auth, async (req, res) => {
       req.user[update] = req.body[update]; // use bracket notation bc the data from user is dynamic 
     });
 
-    await req.user.save() // this is where middleware runs
+    const updatedUser = await req.user.save() // this is where middleware runs
 
-    res.send(req.user);
+    const response = {
+      user: updatedUser,
+      success: true
+    }
+
+    res.send(response); // was req.user
   } catch (e) {
     res.status(400).send();
   }
