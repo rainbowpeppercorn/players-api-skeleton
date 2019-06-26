@@ -15,7 +15,7 @@ describe('Player API', () => {
       .send(data.user);
     token = res.body.token;
     user = res.body.user;
-    data.player.created_by = user._id;  // Changed idi to _id bc I used Mongo
+    data.player.created_by = user._id;  // Changed id to _id bc I used Mongo
     data.player2.created_by = user._id; // Mongo _id
   });
 
