@@ -79,7 +79,7 @@ userSchema.statics.findByCredentials = async (email, password) => {
   const user = await User.findOne({ email });
 
   if (!user) {
-    throw new Error('Login credentials are not valid')
+    throw new Error('We cannot find an existing user with these credentials')
   }
 
   // If user exists, compare the plaintext PW w/ hashed stored PW
