@@ -35,6 +35,19 @@ describe('User API', () => {
         });
     });
 
+    // I'm adding a test for password beefiness...
+    it('should fail if password is weak af', done => {
+      const user = Object.assign({}, data.user, { password: 'abc' });
+      chai.request(server)
+        .post('/api/user')
+        .send(user)
+        .end(err => {
+          expect(err).to.exist;
+          expect(err.status).to.equal(409);
+          done();
+        });
+    });
+
     it('should fail if user already exists', done => {
       User.create(data.user)
         .then(() => {
@@ -134,7 +147,37 @@ describe('User API', () => {
       chai.request(server)
         .put(`/api/user/${loggedInUser._id}`) // changed id to _id bc Mongo
         .send(updatedUser)
-        .set('Authorization', `Bearer ${ token }`) // Added this line
+        .set('Authorization', `Bearer ${ token }`) // Added this line to set token
+        .end((err, res) => {
+          expect(err).not.to.exist;
+          expect(res.status).to.equal(200);
+          expect(res.body.success).to.be.true;
+          expect(res.body.user).to.be.a('object');
+          expect(res.body.user._id).to.be.a('string'); // changed id to _id bc Mongo
+          expect(res.body.user.first_name).to.equal('Elon');
+          expect(res.body.user.last_name).to.equal('Musk');
+          done();
+        });
+    });
+  });
+
+  // I'm adding a test for my PATCH call 
+  describe('PATCH /api/user/:userId', () => {
+    let token; // added a token variable
+
+    beforeEach(async () => {
+      await User.remove({});
+      const res = await chai.request(server)
+        .post('/api/user')
+        .send(data.user);
+      token = res.body.token; // Pull out token (which I attach below)
+    });
+
+    it('should only update the first and last name of user', (done) => {
+      chai.request(server)
+        .patch('/api/user/me')
+        .send({ first_name: 'Elon', last_name: 'Musk' })
+        .set('Authorization', `Bearer ${ token }`) // Set token
         .end((err, res) => {
           expect(err).not.to.exist;
           expect(res.status).to.equal(200);
