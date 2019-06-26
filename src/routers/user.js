@@ -133,27 +133,27 @@ router.patch('/api/user/me', auth, async (req, res) => {
     return res.status(400).send({ error: 'User not permitted to make these updates' });
   }
 
-  // Then do the update
+  // Do the update
   try {
     updates.forEach((update) => {
       req.user[update] = req.body[update]; // use bracket notation bc the data from user is dynamic 
     });
 
-    const updatedUser = await req.user.save() // this is where middleware runs
+    const updatedUser = await req.user.save();
 
     const response = {
       user: updatedUser,
       success: true
-    }
+    };
 
-    res.send(response); // was req.user
+    res.send(response);
   } catch (e) {
     res.status(400).send();
   }
 
 });
 
-// Delete a User by ID
+// DELETE A USER (BY ID)
 router.delete('/api/user/me', auth, async (req, res) => {
   try {
     await req.user.remove();
