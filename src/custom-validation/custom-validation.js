@@ -2,6 +2,7 @@ const validator = require('validator');
 const passwordValidator = require('password-validator');
 
 const passwordSchema = new passwordValidator();
+// Set strong password criteria
 passwordSchema
 .is().min(8)
 .has().digits()
@@ -20,7 +21,7 @@ const customValidation = {
   },
   validateEmail: (value) => {
     if (!validator.isEmail(value)) {
-      throw new Error('Email is invalid');
+      throw new Error('Please use a valid email address');
     }
   }
 }
