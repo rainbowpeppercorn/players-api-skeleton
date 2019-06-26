@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const validator = require('validator');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const Player = require('./player')
@@ -28,9 +27,7 @@ const userSchema = new mongoose.Schema({
     trim: true,
     lowercase: true,
     validate(value) {
-      if (!validator.isEmail(value)) {
-        throw new Error('Email is invalid');
-      }
+      customValidation.validateEmail(value);
     }
   },
   password: {
