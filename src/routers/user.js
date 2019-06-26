@@ -5,7 +5,7 @@ const router = new express.Router();
 
 // Public routes: Create User, Login User (all others require auth)
 
-// Create a User
+// CREATE A USER
 router.post('/api/user', async (req, res) => {
   const user = new User(req.body);
 
@@ -38,13 +38,13 @@ router.post('/api/user', async (req, res) => {
   }
 });
 
-// Login a User
+// LOGIN A USER
 router.post('/api/login', async (req, res) => {
   try {
     // Verify user exists (BYO Method)
     const user = await User.findByCredentials(req.body.email, req.body.password);
     
-    // Generate JWT
+    // Generate JWT (BYO Method)
     const token = await user.generateAuthToken();
 
     user.password = 'Hidden'; // Even tho it's already hashed
@@ -72,7 +72,7 @@ router.post('/api/logout', auth, async (req, res) => {
     await req.user.save();
 
     // If all goes well...
-    res.send();
+    res.send('Thanks for playing! You have been logged out of your session.');
   } catch (e) {
     res.status(500).send();
   }
@@ -95,7 +95,7 @@ router.get('/api/user/me', auth, async (req, res) => {
 });
 
 
-// Update User 
+// UPDATE ENTIRE USER
 router.put('/api/user/:id', auth, async (req, res) => {
 
   try {
@@ -120,9 +120,9 @@ router.put('/api/user/:id', auth, async (req, res) => {
 });
 
 
-// Update your own User profile
+// UPDATE SELECT USER DATA FIELDS
 router.patch('/api/user/me', auth, async (req, res) => {
-  // Error handling: User an only update value if property is allowed 
+  // Error handling: User can only update value if property is allowed 
   const updates = Object.keys(req.body); // Convert req.body from an object to an array of its properties
   const allowedUpdates = ['first_name', 'last_name', 'email', 'password',];
   const isValidOperation = updates.every((update) => { // every property must return true
