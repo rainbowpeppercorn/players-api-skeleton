@@ -2,7 +2,18 @@
 
 ## Notes from rainbowpeppercorn...
 
-Hai Alchemy team! I used NodeJs and MongoDB to complete this assessment. I also stored my JWT secret in a .env file, which I have included in this project for the sake of running the included tests. In a true production environment however, I would add the .env file to .gitignore to avoid publicly exposing sensitive information.  
+Hai Alchemy team! I used NodeJs and MongoDB to complete this assessment. To run this project locally, please install MongoDB onto your machine and get it up and running in the background.
+
+I stored my JWT secret in a .env file, which I have included in this project solely for the sake of one of you guys running the tests. In a true production environment, however, I would add .env to my .gitignore file to avoid publicly exposing sensitive information. But in this case, the tests would fail for you if I didn't include it. 
+
+In an attempt to get all of the tests to pass, I modified a few of them. Nothing too crazy.
+- Wherever the tests were looking for an `id` field, I inserted `_id` instead, because `_id` is the unique field that MongoDB auto-generates for stored documents.
+- For the User API PUT test, I modified the User response data to include the Bearer token, which I then assigned to the User. I noticed a similar functionality in the Player API tests, so I modeled the User tests after those.
+
+You may (or may not) notice two extra tests in the User spec. I added those in. One was a quick test of the strength of a User's password upon creating an account. The other tests a PATCH call I wrote for the User, in case they want to update a partial user profile. I wrote a corresponding PATCH call for a Player as well, to update partial Player profiles, and a Logout call. 
+
+
+
 
 
 ## Instructions
