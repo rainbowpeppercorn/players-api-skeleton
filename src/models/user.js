@@ -39,6 +39,12 @@ const userSchema = new mongoose.Schema({
       customValidation.validatePassword(value);
     }
   },
+  confirm_password: {
+    type: String,
+    required: true,
+    minlength: 8,
+    trim: true
+  },
   tokens: [{
     token: {
       type: String,
@@ -97,6 +103,7 @@ userSchema.pre('save', async function (next) {
   // For new and updated passwords, hash the plaintext 8 rounds
   if (user.isModified('password')) {
     user.password = await bcrypt.hash(user.password, 8);
+    user.confirm_password = await bcrypt.hash(user.password, 8);
   }
 
   next(); 
