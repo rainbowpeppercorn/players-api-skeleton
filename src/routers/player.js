@@ -54,7 +54,7 @@ router.get('/api/players/:id', auth, async (req, res) => {
 
     // Check if such a player exists
     if (!player) {
-      return res.status(404).send();
+      return res.status(404).send('This player is not recognized in your system');
     }
   
     // If all goes well... get dat player
@@ -70,8 +70,9 @@ router.put('/api/players/:id', auth, async (req, res) => {
 
   try {
     const player = await Player.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
+
     if (!player) {
-      return res.status(404).send();
+      return res.status(404).send({ error: 'This player is not recognized in your system' });
     }
 
     await player.save();
@@ -88,7 +89,7 @@ router.put('/api/players/:id', auth, async (req, res) => {
 
 });
 
-// Update a Player by ID
+// UPDATE PARTIAL PLAYER BY ID
 router.patch('/api/players/:id', auth, async (req, res) => {
   const updates = Object.keys(req.body); // Convert req.body from an object to an array of properties
   const allowedUpdates = ['first_name', 'last_name', 'rating', 'handedness'];
@@ -105,18 +106,18 @@ router.patch('/api/players/:id', auth, async (req, res) => {
     const player = await Player.findOne({ _id: req.params.id, created_by: req.user._id });
   
     if (!player) {
-      return res.status(404).send();
+      return res.status(404).send({ error: 'This player is not recognized in your system' });
     }
 
     updates.forEach((update) => {
       player[update] = req.body[update];
     });
 
-    await player.save(); // this is where the middleware runs (can only update valid properties)
+    await player.save();
 
     res.send(player);
   } catch (e) {
-    res.status(400).send(e);
+    res.status(400).send(e.message);
   }
 });
 
@@ -126,11 +127,16 @@ router.delete('/api/players/:id', auth, async (req, res) => {
     const player = await Player.findOneAndDelete({ _id: req.params.id, created_by: req.user._id });
 
     if (!player) {
-      return res.status(404).send('This player does not exist');
+      return res.status(404).send({ error: 'This player does not exist' });
+    }
+
+    const response = {
+      player,
+      success: true
     }
 
     // If successful, send back the deleted player's info
-    res.send(player);
+    res.send(response);
 
   } catch (e) {
     res.status(404).send(e.message);
