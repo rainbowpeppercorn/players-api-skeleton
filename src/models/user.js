@@ -100,7 +100,7 @@ userSchema.statics.findByCredentials = async (email, password) => {
 userSchema.pre('save', async function (next) {
   const user = this; 
 
-  // For new and updated passwords, hash the plaintext 8 rounds
+  // For new and updated passwords, hash the plaintext 8 rounds (both password and confirm)
   if (user.isModified('password')) {
     user.password = await bcrypt.hash(user.password, 8);
     user.confirm_password = await bcrypt.hash(user.password, 8);
