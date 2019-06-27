@@ -23,7 +23,7 @@ const auth = async (req, res, next) => {
     next();
 
   } catch (e) {
-    res.status(401).send({ error: 'Please authenticate yourself.'});
+    res.status(401).send({ error: 'Oops! It looks like you are not logged in.'});
   }
 };
 
