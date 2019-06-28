@@ -35,6 +35,7 @@ describe('Player API', () => {
         });
     });
 
+    // This was the test I modeled the User test after... w/ token assignment 
     ['first_name', 'last_name', 'rating', 'handedness'].forEach(field => {
       it(`should fail if ${ field } not present`, done => {
         chai.request(server)
