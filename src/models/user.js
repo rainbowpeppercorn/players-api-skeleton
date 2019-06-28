@@ -66,7 +66,7 @@ userSchema.virtual('players', {
 // Generate JWT
 userSchema.methods.generateAuthToken = async function () {
   const user = this; 
-  const token = jwt.sign({ _id: user._id.toString() }, process.env.JWT_SECRET);
+  const token = jwt.sign({ _id: user._id.toString() }, process.env.JWT_SECRET, { expiresIn: '90 days' });
 
   // Add user's token to the user object and save to DB
   user.tokens = user.tokens.concat({ token: token });
