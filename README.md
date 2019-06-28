@@ -2,7 +2,9 @@
 
 ## Notes from rainbowpeppercorn...
 
-Hai Alchemy team! I used NodeJs and MongoDB to complete this assessment. To run this project locally, please install MongoDB onto your machine and get it up and running in the background.
+Hai Alchemy team!
+
+I used NodeJs and MongoDB to complete this assessment. To run this project locally, please install MongoDB onto your machine and get it up and running in the background.
 
 I stored my JWT secret in a .env file, which I have included in this project solely for the sake of one of you guys running the tests. In a true production environment, however, I would add .env to my .gitignore file to avoid publicly exposing sensitive information. But in this case, the tests would fail for you if I didn't include it. 
 
@@ -12,7 +14,7 @@ In an attempt to get all of the tests to pass, I modified a few of them. Nothing
 
 You may (or may not) notice two extra tests in the User spec. I added those in. One was a quick test of the strength of a User's password upon creating an account. The other tests a PATCH call I wrote for the User, in case they want to update a partial user profile. I wrote a corresponding PATCH call for a Player as well, to update partial Player profiles, and a Logout call. I will need to write additional tests for these calls in the future. 
 
-## Thank you!! 
+**Thank you!**
 
 
 
