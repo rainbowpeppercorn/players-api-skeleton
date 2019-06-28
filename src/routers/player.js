@@ -14,10 +14,18 @@ router.post('/api/players', auth, async (req, res) => {
   try {
     await player.save();
 
+    let success;
+    if (!player) {
+      success = false;
+      return res.status(409).send('Unable to create player')
+    } else {
+      success = true;
+    }
+
     const response = {
       player,
-      success: true
-    }
+      success
+    };
 
     res.status(201).send(response);
   } catch (e) {
@@ -34,8 +42,16 @@ router.get('/api/players', auth, async (req, res) => {
   try {
     await req.user.populate('players').execPopulate(); // populate() == mongoose's pseudo-join
 
+    let success;
+    if (!req.user.players) {
+      success = false;
+      return res.status(409).send('An error occurred trying to find players')
+    } else {
+      success = true;
+    }
+    
     const response = {
-      success: true,
+      success,
       players: req.user.players,
     }
 
@@ -77,9 +93,17 @@ router.put('/api/players/:id', auth, async (req, res) => {
 
     await player.save();
 
+    let success;
+    if (!player) {
+      success = false;
+      return res.status(409).send('Unable to create player')
+    } else {
+      success = true;
+    }
+
     const response = {
       player,
-      success: true
+      success
     };
 
     res.send(response);
@@ -126,13 +150,17 @@ router.delete('/api/players/:id', auth, async (req, res) => {
   try {
     const player = await Player.findOneAndDelete({ _id: req.params.id, created_by: req.user._id });
 
+    let success;
     if (!player) {
-      return res.status(404).send({ error: 'This player does not exist' });
+      success = false;
+      return res.status(404).send({ error: 'Cannot delete player at this time' });
+    } else {
+      success = true;
     }
 
     const response = {
       player,
-      success: true
+      success
     }
 
     // If successful, send back the deleted player's info
