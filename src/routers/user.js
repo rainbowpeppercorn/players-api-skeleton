@@ -14,18 +14,28 @@ router.post('/api/user', async (req, res) => {
       return res.status(409).send({ error: 'Passwords must match' });
     }
 
+    user.id = user._id.toString();
+
     await user.save();
-  
+
     // Generate JWT
     const token = await user.generateAuthToken();
-
+  
     user.password = 'Hidden'; // Even tho it's already hashed
     user.confirm_password = 'Hidden';
 
+    let success;
+    if (!user) {
+      success = false;
+      return res.status(404).send({ error: 'User was not successfully created' });
+    } else {
+      success = true;
+    }
+  
     const response = {
       user,
       token,
-      success: true
+      success
     };
 
     // If all goes well...
@@ -49,11 +59,20 @@ router.post('/api/login', async (req, res) => {
     const token = await user.generateAuthToken();
 
     user.password = 'Hidden'; // Even tho it's already hashed
+    user.confirm_password = 'Hidden'; 
+
+    let success;
+    if (!user) {
+      success = false;
+      return res.status(404).send({ error: 'Unable to login at this time' });
+    } else {
+      success = true;
+    }
 
     const response = {
       user,
       token,
-      success: true
+      success
     };
     
     res.send(response);
@@ -75,7 +94,7 @@ router.post('/api/logout', auth, async (req, res) => {
     // If all goes well...
     res.send('Thanks for playing! You have been logged out of your session.');
   } catch (e) {
-    res.status(500).send();
+    res.status(500).send(e.message);
   }
 });
 
@@ -86,7 +105,7 @@ router.post('/api/logoutAll', auth, async (req, res) => {
     await req.user.save(); // Save the token-less User
     res.send();
   } catch (e) {
-    res.status(500).send();
+    res.status(500).send(e.message);
   }
 });
 
@@ -98,7 +117,6 @@ router.get('/api/user/me', auth, async (req, res) => {
 
 // UPDATE ENTIRE USER
 router.put('/api/user/:id', auth, async (req, res) => {
-
   try {
     const user = await User.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
 
@@ -108,9 +126,17 @@ router.put('/api/user/:id', auth, async (req, res) => {
 
     await user.save();
 
+    let success;
+    if (!user) {
+      success = false;
+      return res.status(404).send({ error: 'Unable to login at this time' });
+    } else {
+      success = true;
+    }
+
     const response = {
       user,
-      success: true
+      success
     };
 
     res.send(response);
@@ -142,9 +168,17 @@ router.patch('/api/user/me', auth, async (req, res) => {
 
     const updatedUser = await req.user.save();
 
+    let success;
+    if (!updatedUser) {
+      success = false;
+      return res.status(404).send({ error: 'Unable to login at this time' });
+    } else {
+      success = true;
+    }
+
     const response = {
       user: updatedUser,
-      success: true
+      success
     };
 
     res.send(response);
@@ -159,9 +193,18 @@ router.delete('/api/user/me', auth, async (req, res) => {
   try {
     const deletedUser = await req.user.remove();
 
+    let success;
+    if (!deletedUser) {
+      success = false;
+      return res.status(404).send({ error: 'Unable to login at this time' });
+    } else {
+      success = true;
+    }
+
     const response = {
       user: deletedUser,
-      success: true
+      success,
+      message: 'User profile has been deleted'
     }
 
     // Send the deleted User's info back if successful
