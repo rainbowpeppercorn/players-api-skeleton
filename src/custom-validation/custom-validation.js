@@ -7,6 +7,7 @@ const passwordSchema = new passwordValidator();
 passwordSchema
 .is().min(8)
 .has().digits()
+.has().lowercase()
 .has().not().spaces()
 .is().not().oneOf(['Passw0rd', 'passw0rd', 'Password123', 'password123']);
 
