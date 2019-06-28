@@ -2,7 +2,7 @@
 
 ## Notes from rainbowpeppercorn...
 
-Hai Alchemy team!
+**Hai Alchemy team!**
 
 I used NodeJs and MongoDB to complete this assessment. To run this project locally, please install MongoDB onto your machine and get it up and running in the background.
 
